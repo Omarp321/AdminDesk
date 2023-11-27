@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -114,7 +114,7 @@ namespace AdminDeskTest
             var serviceOrderRepositoryMock = new Mock<IServiceOrderRepository>();
             var reportRepositoryMock = new Mock<IReportRepository>();
             var customerRepositoryMock = new Mock<ICustomerRepository>();
-            var userManagerMock = GetUserManagerMock();
+            var userManagerMock = new Mock<UserManager<IdentityUser>>();
             var controller = new ServiceOrderController(
                 serviceOrderRepositoryMock.Object,
                 reportRepositoryMock.Object,
@@ -134,19 +134,5 @@ namespace AdminDeskTest
             Xunit.Assert.Equal("Index", ((RedirectToActionResult)result).ActionName);
         }
 
-        // Hjelpemetode for å lage en mock for UserManager med valgfri nåværende bruker
-        private Mock<UserManager<IdentityUser>> GetUserManagerMock(IdentityUser currentUser = null)
-        {
-            var userManagerMock = new Mock<UserManager<IdentityUser>>(new Mock<IUserStore<IdentityUser>>().Object,
-                null, null, null, null, null, null, null, null);
-
-            if (currentUser != null)
-            {
-                userManagerMock.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
-                    .ReturnsAsync(currentUser);
-            }
-
-            return userManagerMock;
-        }
     }
 }
